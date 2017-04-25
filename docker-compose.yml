@@ -1,0 +1,40 @@
+version: "3"
+services:
+  master:
+    image: gettyimages/spark
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "7077:7077"
+    expose:
+      - "7077"
+    networks:
+      - spark-network
+    deploy:
+        replicas: 1
+        placement:
+          constraints: [node.role == manager]
+    environment:
+        SPARK_LOCAL_IP: 0.0.0.0
+  worker:
+    image: gettyimages/spark
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://master:7077
+    networks:
+      - spark-network
+    deploy:
+      replicas: 2
+      placement:
+            constraints: [node.role != manager]
+  proxy:
+    image: spark-ui-proxy
+    command: master:8080 80
+    ports:
+      - "80:80"
+    networks:
+      - spark-network
+    deploy:
+      replicas: 1
+      placement:
+          constraints: [node.role == manager]
+networks:
+  spark-network:
+    driver: overlay
