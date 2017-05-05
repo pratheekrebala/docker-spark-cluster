@@ -24,6 +24,17 @@ services:
       replicas: 2
       placement:
             constraints: [node.role != manager]
+  notebook:
+    image: jupyter/pyspark-notebook
+    command: start-notebook.sh --NotebookApp.token=''
+    ports:
+      - "8888:8888"
+    networks:
+      - spark-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
   proxy:
     image: spark-ui-proxy
     command: master:8080 80
