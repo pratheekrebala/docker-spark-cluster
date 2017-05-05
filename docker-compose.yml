@@ -26,7 +26,7 @@ services:
             constraints: [node.role != manager]
   notebook:
     image: jupyter/pyspark-notebook
-    command: start-notebook.sh --NotebookApp.token=''
+    command: start-notebook.sh --NotebookApp.token='' --ip=0.0.0.0
     ports:
       - "8888:8888"
     networks:
