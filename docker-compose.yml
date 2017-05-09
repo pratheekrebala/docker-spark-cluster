@@ -1,26 +1,32 @@
 version: "3"
 services:
   hadoop-master:
-    image: localhost:5000/hadoop
+    image: hadoop
     command: ~/start-hadoop.sh
     ports:
       - "50070:50070"
       - "8088:8088"
     volumes:
-      ./hadoop-slaves:/usr/local/hadoop/etc/hadoop/slaves
+      - ./hadoop-slaves:/usr/local/hadoop/etc/hadoop/slaves
     environment:
       yarn.resourcemanager.hostname: hadoop-master
       fs.defaultFS: hdfs://hadoop-master:9000
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
   hadoop-slave:
     image: 10.176.225.202:5000/hadoop
     command: ~/start-hadoop.sh
     volumes:
-      ./hadoop-slaves:/usr/local/hadoop/etc/hadoop/slaves
+      - ./hadoop-slaves:/usr/local/hadoop/etc/hadoop/slaves
     environment:
       yarn.resourcemanager.hostname: hadoop-master
       fs.defaultFS: hdfs://hadoop-master:9000
     deploy:
       replicas: 4
+      placement:
+        constraints: [node.role != manager]
   registry:
     image: registry
     ports:
@@ -35,7 +41,7 @@ services:
       placement:
         constraints: [node.role == manager]
   master:
-    image: localhost:5000/spark
+    image: spark
     command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "7077:7077"
