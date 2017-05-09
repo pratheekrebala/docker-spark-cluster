@@ -3,22 +3,18 @@ services:
   registry:
     image: registry
     ports:
-      - "5000:5000"
-      - "443:5000"
+      - 5000:5000
     networks:
       - spark-network
     volumes:
       - "./registry/data_volume:/var/lib/registry"
-      - "./registry/letsencrypt_cache:/data/letsencrypt"
+      - "./registry:/data"
     deploy:
       replicas: 1
       placement:
         constraints: [node.role == manager]
-    environment:
-      REGISTRY_HTTP_TLS_LETSENCRYPT_CACHEFILE: /data/letsencrypt
-      REGISTRY_HTTP_TLS_LETSENCRYPT_EMAIL: pratheek.rebala@time.com 
   master:
-    image: gettyimages/spark
+    image: 10.176.225.202:5000/spark
     command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "7077:7077"
@@ -33,12 +29,12 @@ services:
     environment:
         SPARK_LOCAL_IP: 0.0.0.0
   worker:
-    image: gettyimages/spark
+    image: 10.176.225.202:5000/spark
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://master:7077
     networks:
       - spark-network
     deploy:
-      replicas: 2
+      replicas: 4
       placement:
             constraints: [node.role != manager]
   notebook:
