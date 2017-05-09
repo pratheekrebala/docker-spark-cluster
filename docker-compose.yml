@@ -47,6 +47,8 @@ services:
         replicas: 1
         placement:
           constraints: [node.role == manager]
+    volumes:
+       - "/media/WD/election_dump/sfm-data/collection_set/2016:/twitter"
     environment:
         SPARK_LOCAL_IP: 0.0.0.0
   worker:
@@ -69,6 +71,9 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+    volumes:
+      - "./jupyter_notebooks:/home/jovyan/work"
+      - "/media/WD/election_dump/sfm-data/collection_set/2016:/twitter"
   proxy:
     image: spark-ui-proxy
     command: master:8080 80
