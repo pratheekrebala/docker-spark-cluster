@@ -2,7 +2,7 @@ version: "3"
 services:
   hadoop-master:
     image: hadoop:1.0
-    command: ~/start-hadoop.sh
+    command: [ "sh", "-c", "service ssh start; /root/start-hadoop.sh; tail -f /dev/null"]
     ports:
       - "50070:50070"
       - "8088:8088"
@@ -17,7 +17,6 @@ services:
         constraints: [node.role == manager]
   hadoop-slave:
     image: 10.176.225.202:5000/hadoop:1.0
-    command: ~/start-hadoop.sh
     volumes:
       - ./hadoop-slaves:/usr/local/hadoop/etc/hadoop/slaves
     environment:
