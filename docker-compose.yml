@@ -17,6 +17,7 @@ services:
         constraints: [node.role == manager]
   hadoop-slave:
     image: 10.176.225.202:5000/hadoop:1.0
+    command: [ "sh", "-c", "service ssh start; tail -f /dev/null"]
     volumes:
       - ./hadoop-slaves:/usr/local/hadoop/etc/hadoop/slaves
     environment:
