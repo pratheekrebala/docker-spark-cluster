@@ -1,6 +1,8 @@
 FROM kiwenlau/hadoop:1.0
 
 #Enable SSH by dafault
-RUN systemctl enable ssh.socket
+RUN update-rc.d ssh defaults
 
-CMD [ "sh", "-c", "/root/start-hadoop-master.sh"]
+COPY ./start-hadoop-master.sh ~/start-hadoop.sh
+
+CMD [ "sh", "-c", "/root/start-hadoop.sh"]

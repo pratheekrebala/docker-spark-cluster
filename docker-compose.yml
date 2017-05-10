@@ -1,7 +1,7 @@
 version: "3"
 services:
   hadoop-master:
-    image: hadoop:1.0
+    image: hadoop:latest
     ports:
       - "50070:50070"
       - "8088:8088"
@@ -16,7 +16,7 @@ services:
     depends_on:
       - hadoop-slave
   hadoop-slave:
-    image: 10.176.225.202:5000/hadoop:1.0
+    image: 10.176.225.202:5000/hadoop:latest
     environment:
       yarn.resourcemanager.hostname: hadoop-master
       fs.defaultFS: hdfs://hadoop-master:9000
@@ -24,6 +24,8 @@ services:
       replicas: 4
       placement:
         constraints: [node.role != manager]
+    depends_on:
+      - registry
   registry:
     image: registry
     ports:
@@ -37,8 +39,6 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
-    depends_on:
-      - registry
   master:
     image: spark
     command: bin/spark-class org.apache.spark.deploy.master.Master
